@@ -1,0 +1,28 @@
+numpy==1.24.3
+opencv-contrib-python==4.11.0.86
+tensorflow-macos==2.13.0 
+# For non-Apple Silicon Macs or other OS, you might use:
+# tensorflow==2.13.0 
+mediapipe==0.10.21
+# MediaPipe sub-dependencies that were important for compatibility:
+attrs==25.3.0 
+flatbuffers==25.2.10
+jax==0.4.26
+jaxlib==0.4.26
+matplotlib==3.10.3 
+ml-dtypes==0.2.0 
+protobuf==4.25.7
+sounddevice==0.5.2
+sentencepiece==0.2.0
+# Other direct dependencies from scripts:
+scikit-learn==1.6.1 # As installed, check if compatible with numpy 1.24.3
+keyboard==0.13.5
+language-tool-python==2.9.3
+# Dependencies of scikit-learn
+joblib>=1.2.0
+threadpoolctl>=3.1.0
+# Dependencies of language-tool-python
+# requests (pulled by tensorflow/tensorboard)
+tqdm>=4.67.1
+psutil>=7.0.0
+toml==0.10.2
