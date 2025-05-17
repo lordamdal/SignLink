@@ -5,11 +5,11 @@ tensorflow-macos==2.13.0
 # tensorflow==2.13.0 
 mediapipe==0.10.21
 # MediaPipe sub-dependencies that were important for compatibility:
-attrs==25.3.0 
+attrs==25.3.0
 flatbuffers==25.2.10
 jax==0.4.26
 jaxlib==0.4.26
-matplotlib==3.10.3 
+matplotlib==3.9.4
 ml-dtypes==0.2.0 
 protobuf==4.25.7
 sounddevice==0.5.2

@@ -1,3 +1,8 @@
+# Models and data
+data/
+my_model/
+sign_venv_v2/
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]

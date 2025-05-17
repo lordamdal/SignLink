@@ -7,9 +7,10 @@ import string
 import mediapipe as mp
 import cv2
 from my_functions import *
-import keyboard
+import sys
 from tensorflow.keras.models import load_model
 import language_tool_python
+import sys
 
 # Set the path to the data directory
 PATH = os.path.join('data')
@@ -18,7 +19,12 @@ PATH = os.path.join('data')
 actions = np.array(os.listdir(PATH))
 
 # Load the trained model
-model = load_model('my_model')
+MODEL_PATH = 'my_model'
+if not os.path.exists(MODEL_PATH):
+    print(f"[ERROR] Model directory not found: '{MODEL_PATH}'.")
+    print("Please train the model first by running: python model.py")
+    sys.exit(1)
+model = load_model(MODEL_PATH)
 
 # Create an instance of the grammar correction tool
 tool = language_tool_python.LanguageToolPublicAPI('en-UK')
@@ -37,7 +43,11 @@ with mp.solutions.holistic.Holistic(min_detection_confidence=0.75, min_tracking_
     # Run the loop while the camera is open
     while cap.isOpened():
         # Read a frame from the camera
-        _, image = cap.read()
+        ret, image = cap.read()
+        # If frame not read correctly, exit the loop
+        if not ret or image is None:
+            print("[ERROR] Failed to grab frame from camera. Exiting.")
+            break
         # Process the image and obtain sign landmarks using image_process function from my_functions.py
         results = image_process(image, holistic)
         # Draw the sign landmarks on the image using draw_landmarks function from my_functions.py
@@ -54,21 +64,26 @@ with mp.solutions.holistic.Holistic(min_detection_confidence=0.75, min_tracking_
             # Clear the keypoints list for the next set of frames
             keypoints = []
 
-            # Check if the maximum prediction value is above 0.9
+            # Check if the maximum prediction probability is above threshold
             if np.amax(prediction) > 0.9:
-                # Check if the predicted sign is different from the previously predicted sign
-                if last_prediction != actions[np.argmax(prediction)]:
-                    # Append the predicted sign to the sentence list
-                    sentence.append(actions[np.argmax(prediction)])
-                    # Record a new prediction to use it on the next cycle
-                    last_prediction = actions[np.argmax(prediction)]
+                pred_index = np.argmax(prediction)
+                pred_action = actions[pred_index]
+                # Only record if different from last prediction
+                if last_prediction != pred_action:
+                    sentence.append(pred_action)
+                    last_prediction = pred_action
+                    # Print prediction and current sentence to console
+                    print(f"[PREDICT] {pred_action}")
+                    print(f"[SENTENCE] {' '.join(sentence)}")
 
         # Limit the sentence length to 7 elements to make sure it fits on the screen
         if len(sentence) > 7:
             sentence = sentence[-7:]
 
+        # Wait for a key press for 10ms
+        key = cv2.waitKey(10) & 0xFF
         # Reset if the "Spacebar" is pressed
-        if keyboard.is_pressed(' '):
+        if key == ord(' '):
             sentence, keypoints, last_prediction, grammar, grammar_result = [], [], [], [], []
 
         # Check if the list is not empty
@@ -88,11 +103,11 @@ with mp.solutions.holistic.Holistic(min_detection_confidence=0.75, min_tracking_
                     sentence[-1] = sentence[-1].capitalize()
 
         # Perform grammar check if "Enter" is pressed
-        if keyboard.is_pressed('enter'):
-            # Record the words in the sentence list into a single string
+        elif key in (10, 13):  # Enter key codes
             text = ' '.join(sentence)
-            # Apply grammar correction tool and extract the corrected result
             grammar_result = tool.correct(text)
+            # Print corrected grammar to console
+            print(f"[GRAMMAR] {grammar_result}")
 
         if grammar_result:
             # Calculate the size of the text to be displayed and the X coordinate for centering the text on the image
@@ -114,10 +129,8 @@ with mp.solutions.holistic.Holistic(min_detection_confidence=0.75, min_tracking_
         # Show the image on the display
         cv2.imshow('Camera', image)
 
-        cv2.waitKey(1)
-
-        # Check if the 'Camera' window was closed and break the loop
-        if cv2.getWindowProperty('Camera',cv2.WND_PROP_VISIBLE) < 1:
+        # Check if the 'Camera' window was closed or Esc key pressed to break the loop
+        if cv2.getWindowProperty('Camera', cv2.WND_PROP_VISIBLE) < 1 or key == 27:
             break
 
     # Release the camera and close all windows
