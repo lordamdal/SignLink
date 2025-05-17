@@ -111,20 +111,20 @@ with mp.solutions.holistic.Holistic(min_detection_confidence=0.75, min_tracking_
 
         if grammar_result:
             # Calculate the size of the text to be displayed and the X coordinate for centering the text on the image
-            textsize = cv2.getTextSize(grammar_result, cv2.FONT_HERSHEY_SIMPLEX, 1, 2)[0]
+            textsize = cv2.getTextSize(grammar_result, cv2.FONT_HERSHEY_SIMPLEX, 1.5, 2)[0]
             text_X_coord = (image.shape[1] - textsize[0]) // 2
 
             # Draw the sentence on the image
             cv2.putText(image, grammar_result, (text_X_coord, 470),
-                        cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 255, 255), 2, cv2.LINE_AA)
+                        cv2.FONT_HERSHEY_SIMPLEX, 1.5, (255, 255, 255), 2, cv2.LINE_AA)
         else:
             # Calculate the size of the text to be displayed and the X coordinate for centering the text on the image
-            textsize = cv2.getTextSize(' '.join(sentence), cv2.FONT_HERSHEY_SIMPLEX, 1, 2)[0]
+            textsize = cv2.getTextSize(' '.join(sentence), cv2.FONT_HERSHEY_SIMPLEX, 1.5, 2)[0]
             text_X_coord = (image.shape[1] - textsize[0]) // 2
 
             # Draw the sentence on the image
             cv2.putText(image, ' '.join(sentence), (text_X_coord, 470),
-                        cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 255, 255), 2, cv2.LINE_AA)
+                        cv2.FONT_HERSHEY_SIMPLEX, 1.5, (255, 255, 255), 2, cv2.LINE_AA)
 
         # Show the image on the display
         cv2.imshow('Camera', image)
