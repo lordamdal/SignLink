@@ -2,6 +2,9 @@
 
 This project captures video from a webcam, uses MediaPipe to detect hand landmarks, and a custom-trained Keras LSTM model to recognize a predefined set of sign language gestures in real-time. The recognized gestures are concatenated to form sentences, which can optionally be grammar-checked.
 
+Next Update: 
+Implement a 1D-CNN to improve the accuracy of the translation 
+
 ## Project Structure
 
 - `main.py`: Main script to run the real-time sign gesture recognition.
